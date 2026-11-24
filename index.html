@@ -2231,8 +2231,8 @@ let caseOpening;
           const sensor = window.portfolioTilt;
           const age = Math.max(0, (now - (sensor?.shakeTime ?? -10000)) / 1000);
           const pulse = sensor?.enabled ? (sensor.shakePower || 0) * Math.exp(-age * 4.5) : 0;
-          const shakeX = Math.sin(age * 23 + index * 1.9) * pulse * 22;
-          const shakeY = Math.sin(age * 27 + index * 2.7) * pulse * 16;
+          const shakeX = Math.sin(age * 23 + index * 1.9) * pulse * 52;
+          const shakeY = Math.sin(age * 27 + index * 2.7) * pulse * 38;
           letter.style.setProperty('--grid-scatter-x', `${(warpedX - x) * .7 + shakeX}px`);
           letter.style.setProperty('--grid-scatter-y', `${(warpedY - y) * .7 + shakeY}px`);
         });
@@ -2301,6 +2301,12 @@ let caseOpening;
         document.querySelectorAll('#work .project:not([hidden]) .project-tile').forEach(tile => {
           const rect = tile.parentElement.getBoundingClientRect();
           const active = autoplay && rect.bottom > 0 && rect.top < height && !document.querySelector('#project-detail').open;
+          const device = window.portfolioTilt;
+          const elapsed = Math.max(0, (now - (device?.shakeTime ?? -10000)) / 1000);
+          const shakeAmount = active && device?.enabled ? (device.shakePower || 0) * Math.exp(-elapsed * 4.5) : 0;
+          const tileIndex = Array.from(tile.parentElement.parentElement.children).indexOf(tile.parentElement);
+          tile.style.setProperty('--device-shake-x', `${Math.sin(elapsed * 22 + tileIndex * 1.8) * shakeAmount * 24}px`);
+          tile.style.setProperty('--device-shake-y', `${Math.sin(elapsed * 26 + tileIndex * 2.3) * shakeAmount * 18}px`);
           if (active) {
             const x = rect.left + rect.width / 2, y = rect.top + rect.height / 2;
             const [leftX] = point(rect.left, y);

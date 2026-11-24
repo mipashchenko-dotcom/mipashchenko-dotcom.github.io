@@ -2012,3 +2012,8 @@ main > #contact {
   #discover .is-word-reveal-complete .intro-word-mask,
   #about .is-word-reveal-complete .intro-word-mask { overflow: visible; clip-path: none; }
 }
+/* Only the viewport clips intro travel, never the narrower section box. */
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  main > #discover { overflow: visible; clip-path: none; }
+  #work .project-tile { translate: var(--device-shake-x, 0px) var(--device-shake-y, 0px); }
+}
