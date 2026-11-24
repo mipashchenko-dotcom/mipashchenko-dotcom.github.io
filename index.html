@@ -241,9 +241,10 @@
         }
         const finish = () => {
           running.forEach(animation => animations.delete(animation));
-          if (innerWidth <= 1024 && element.matches('#contact .contact-intro, .hero .role') && !motionPreference.matches) {
+          if (matchMedia('(max-width: 1024px), (hover: none) and (pointer: coarse)').matches && element.matches('#contact .contact-intro, .hero .role, #discover .hero-statement, #about .about-copy') && !motionPreference.matches) {
             // Keep the word anchors for the continuous grid-driven deformation.
             // Other text keeps its original reveal cleanup behavior.
+            element.classList.add('is-word-reveal-complete');
             element.setAttribute('aria-label', text.trim());
             element.querySelectorAll('.intro-word-mask').forEach(mask => mask.setAttribute('aria-hidden', 'true'));
             return;
@@ -2193,8 +2194,8 @@ let caseOpening;
           if (!pointer) return [x, y];
           const dx = x - pointer.x, dy = y - pointer.y;
           const distance = Math.hypot(dx, dy);
-          const force = Math.exp(-distance * distance / (2 * 150 * 150)) * strength * (autoplay ? .07 : .14);
-          return [x + dx * force + (autoplay ? tiltX * 18 : 0), y + dy * force + (autoplay ? tiltY * 18 : 0)];
+          const force = Math.exp(-distance * distance / (2 * 150 * 150)) * strength * (autoplay ? (window.portfolioTilt?.enabled && window.portfolioTilt.received ? .22 : .07) : .14);
+          return [x + dx * force + (autoplay ? tiltX * 42 : 0), y + dy * force + (autoplay ? tiltY * 42 : 0)];
         };
         // Use the same deformation field for the resting mobile hero glyphs.
         // Measure their orbit wrappers, which are unaffected by the child offset.
@@ -2258,6 +2259,20 @@ let caseOpening;
           role.style.removeProperty('--grid-role-y');
           role.querySelectorAll('.intro-word').forEach(word => { word.style.translate = '0px 0px'; });
         }
+        // Use stable mask boxes for word offsets, independent of scroll/reveal transforms.
+        document.querySelectorAll('#discover .hero-statement, #about .about-copy').forEach(copy => {
+          const bounds = copy.getBoundingClientRect();
+          const active = autoplay && bounds.bottom > 0 && bounds.top < height;
+          copy.querySelectorAll('.intro-word-mask').forEach(mask => {
+            const word = mask.querySelector('.intro-word');
+            if (!word) return;
+            if (!active) { word.style.translate = '0px 0px'; return; }
+            const rect = mask.getBoundingClientRect();
+            const x = rect.left + rect.width / 2, y = rect.top + rect.height / 2;
+            const [wx, wy] = point(x, y);
+            word.style.translate = `${(wx - x) * .8}px ${(wy - y) * .8}px`;
+          });
+        });
         const contactRect = contactCopy.getBoundingClientRect();
         const warpContact = autoplay && contactRect.bottom > 0 && contactRect.top < height;
         // Warp the existing copy words, retaining their reveal and natural spacing.

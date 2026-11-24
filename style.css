@@ -2006,3 +2006,9 @@ main > #contact {
   }
   body:has(#project-detail[open]) .device-tilt-toggle { display: none; }
 }
+@media (max-width: 1024px), (hover: none) and (pointer: coarse) {
+  #discover .hero-statement-content,
+  #discover .hero-statement { overflow: visible; clip-path: none; }
+  #discover .is-word-reveal-complete .intro-word-mask,
+  #about .is-word-reveal-complete .intro-word-mask { overflow: visible; clip-path: none; }
+}
