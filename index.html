@@ -2158,7 +2158,7 @@ let caseOpening;
   <script>
     (() => {
       const enabled = matchMedia('(min-width: 1025px) and (hover: hover) and (pointer: fine)');
-      const mobile = matchMedia('(max-width: 1024px)');
+      const mobile = matchMedia('(max-width: 1024px), (hover: none) and (pointer: coarse)');
       const motion = matchMedia('(prefers-reduced-motion: reduce)');
       const canvas = document.createElement('canvas');
       canvas.className = 'interactive-grid';

@@ -1,5 +1,5 @@
 (() => {
-  const compact = matchMedia('(max-width: 1024px)');
+  const compact = matchMedia('(max-width: 1024px), (hover: none) and (pointer: coarse)');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const state = window.portfolioTilt = { enabled: false, received: false, x: 0, y: 0, shakeTime: -10000, shakePower: 0 };
   let beta = null, gamma = null, lastAcceleration = null, lastShake = -10000;
@@ -53,16 +53,18 @@
       // Request both permissions directly from this user gesture on iOS.
       const orientationAPI = window.DeviceOrientationEvent;
       const motionAPI = window.DeviceMotionEvent;
-      const [orientationPermission, motionPermission] = await Promise.all([
+      const [orientationPermission, motionPermission] = await Promise.allSettled([
         typeof orientationAPI?.requestPermission === 'function' ? orientationAPI.requestPermission() : Promise.resolve('granted'),
         typeof motionAPI?.requestPermission === 'function' ? motionAPI.requestPermission() : Promise.resolve('granted')
       ]);
-      if (orientationPermission !== 'granted' && motionPermission !== 'granted') {
+      const orientationGranted = orientationPermission.status === 'fulfilled' && orientationPermission.value === 'granted';
+      const motionGranted = motionPermission.status === 'fulfilled' && motionPermission.value === 'granted';
+      if (!orientationGranted && !motionGranted) {
         button.textContent = 'Motion not enabled — retry'; return;
       }
       reset(); state.enabled = true;
-      if (orientationPermission === 'granted') window.addEventListener('deviceorientation', orient, { passive: true });
-      if (motionPermission === 'granted') window.addEventListener('devicemotion', shake, { passive: true });
+      if (orientationGranted) window.addEventListener('deviceorientation', orient, { passive: true });
+      if (motionGranted) window.addEventListener('devicemotion', shake, { passive: true });
       button.textContent = 'Disable motion';
       button.setAttribute('aria-pressed', 'true');
     } catch { button.textContent = 'Motion unavailable — retry'; }
