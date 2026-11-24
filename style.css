@@ -1975,3 +1975,21 @@ main > #contact {
 .project-dialog .detail-split.is-text-only .detail-secondary { display: none; }
 .project-dialog .detail-split.is-text-only .detail-copy { grid-column: 1; grid-row: auto; }
 .project-dialog .detail-split.is-text-only .detail-copy > p:last-child { max-width: 760px; }
+/* SVG artwork follows the existing clipped, animated arrow wrappers. */
+.case-arrow-glyph svg { display: block; width: 100%; height: 100%; }
+
+/* Center link labels and SVG arrows on the same vertical axis. */
+.contact-option, .free-work-link, .project-heading { align-items: center; }
+.case-arrow { align-self: center; flex-shrink: 0; }
+
+/* Optional compact-screen device tilt control. */
+.device-tilt-toggle { display: none; }
+@media (max-width: 1024px) {
+  .device-tilt-toggle:not([hidden]) {
+    display: block; position: fixed; right: var(--compact-gutter, 20px); bottom: 20px;
+    z-index: 80; padding: 10px 14px; border: 1px solid currentColor; border-radius: 999px;
+    background: #000; color: #f2f0eb; font: inherit; font-size: 12px; line-height: 1.3;
+  }
+  .device-tilt-toggle:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+  body:has(#project-detail[open]) .device-tilt-toggle { display: none; }
+}
